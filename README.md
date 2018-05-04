@@ -23,14 +23,25 @@ To populate, send a **POST** request to `/setup/data`. The body must contain the
 #### Example POST body
 
 ```
+
 {
-  "_id" : "/vat/111111111/obligations",
+  "_id" : "/vat/returns/vrn/555555555?period-key=17AA",
   "method" : "GET",
   "status" : 200,
-  "response" : {
-    "obligations": []
+  "response" :{
+    "periodKey": "17AA",
+    "vatDueSales": 100.00,
+    "vatDueAcquisitions": 100.00,
+    "vatDueTotal": 200,
+    "vatReclaimedCurrPeriod": 100,
+    "vatDueNet": 100,
+    "totalValueSalesExVAT": 500,
+    "totalValuePurchasesExVAT": 1234567890123.00,
+    "totalValueGoodsSuppliedExVAT": 500,
+    "totalAllAcquisitionsExVAT": 500
   }
 }
+
 ```
 
 #### Response codes
