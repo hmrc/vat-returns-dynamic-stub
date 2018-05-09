@@ -14,16 +14,11 @@
  * limitations under the License.
  */
 
-package models
+package modules
 
-import play.api.libs.json.{JsValue, Json, OFormat}
+import com.google.inject.AbstractModule
+import controllers.actions.{AuthAction, AuthActionImpl}
 
-case class DataModel(_id: String,
-                     method: String,
-                     status: Int,
-                     response: Option[JsValue])
-
-object DataModel {
-  implicit val formats: OFormat[DataModel] = Json.format[DataModel]
+class AuthModule extends AbstractModule {
+  def configure(): Unit = bind(classOf[AuthAction]).to(classOf[AuthActionImpl])
 }
-
