@@ -1,0 +1,3 @@
+
+POST    /data       @controllers.SetupDataController.addData
+DELETE  /all-data   @controllers.SetupDataController.removeAll
