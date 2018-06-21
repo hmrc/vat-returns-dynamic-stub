@@ -2,7 +2,6 @@
 
 [![Build Status](https://travis-ci.org/hmrc/vat-returns-dynamic-stub.svg)](https://travis-ci.org/hmrc/vat-returns-dynamic-stub) [ ![Download](https://api.bintray.com/packages/hmrc/releases/vat-returns-dynamic-stub/images/download.svg) ](https://bintray.com/hmrc/releases/vat-returns-dynamic-stub/_latestVersion)
 
-
 ## Usage
 
 To use this stub, run the command `sbt "run 9159"`
