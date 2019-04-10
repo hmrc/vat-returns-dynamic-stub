@@ -28,14 +28,19 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class DataRepository @Inject()() extends MongoDbConnection {
 
-  private lazy val repository: DynamicStubRepository = new DynamicStubRepository()
+  lazy val repository = new StubbedDataRepositoryBase() {
 
-  def find(query: (String, JsValueWrapper)*)(implicit ec: ExecutionContext): Future[List[DataModel]] = repository.find(query:_*)
+    override def removeAll()(implicit ec: ExecutionContext): Future[WriteResult] = removeAll(WriteConcern.Acknowledged)
 
-  def insert(data: DataModel)(implicit ec: ExecutionContext): Future[WriteResult] = repository.insert(data)
+    override def removeById(url: String)(implicit ec: ExecutionContext): Future[WriteResult] = remove("_id" -> url)
 
-  def removeById(id: String)(implicit ec: ExecutionContext): Future[WriteResult] = repository.removeById(id)
+    def removeBySchemaId(schemaId: String)(implicit ec: ExecutionContext): Future[WriteResult] = remove("schemaId" -> schemaId)
 
-  def removeAll()(implicit ec: ExecutionContext): Future[WriteResult] = repository.removeAll()
+    override def addEntry(document: DataModel)(implicit ec: ExecutionContext): Future[WriteResult] = insert(document)
+
+    override def findById(url: String)(implicit ec: ExecutionContext): Future[DataModel] = find("_id" -> url).map(_.last)
+  }
+
+  def apply(): DynamicStubRepository[DataModel, String] = repository
 
 }

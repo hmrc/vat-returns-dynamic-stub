@@ -16,15 +16,12 @@
 
 package models
 
-import play.api.libs.json.{JsValue, Json, OFormat}
+import play.api.libs.json.{Format, Json}
 
-case class DataModel(_id: String,
-                     schemaId: Option[String] = None,
-                     method: String,
-                     status: Int,
-                     response: Option[JsValue])
+case class ErrorResponse(code: String, reason: String)
 
-object DataModel {
-  implicit val formats: OFormat[DataModel] = Json.format[DataModel]
+object ErrorResponse {
+
+  implicit val format: Format[ErrorResponse] = Json.format[ErrorResponse]
+
 }
-
