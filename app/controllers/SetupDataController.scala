@@ -43,7 +43,7 @@ class SetupDataController @Inject()(schemaValidation: SchemaValidation,
               }
             case None => addStubDataToDB(json)
           }
-        case x => Future.successful(BadRequest(s"The method: $x is currently unsupported"))
+        case x => Future.successful(MethodNotAllowed(s"The method: $x is currently unsupported"))
       }
     ) recover {
       case ex => BadRequest(s"Error Parsing Json DataModel: \n $ex")

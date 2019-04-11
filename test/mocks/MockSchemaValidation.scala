@@ -35,7 +35,7 @@ trait MockSchemaValidation extends UnitSpec with MockFactory {
       .returning(response)
   }
 
-  def mockValidateResponseJson(schemaId: String, json: Option[JsValue])
+  def mockValidateResponseJson(schemaId: String)
                               (response: Boolean): CallHandler3[String, Option[JsValue], ExecutionContext, Future[Boolean]] = {
     (mockSchemaValidation.validateResponseJson(_: String, _: Option[JsValue])(_: ExecutionContext))
       .expects(schemaId, *, *)
@@ -49,14 +49,14 @@ trait MockSchemaValidation extends UnitSpec with MockFactory {
       .returning(response)
   }
 
-  def mockValidateUrlMatch(schemaId: String, url: String)
+  def mockValidateUrlMatch(schemaId: String)
                           (response: Boolean): CallHandler3[String, String, ExecutionContext, Future[Boolean]] = {
     (mockSchemaValidation.validateUrlMatch(_: String, _: String)(_: ExecutionContext))
       .expects(schemaId, *, *)
       .returning(response)
   }
 
-  def mockValidateRequestJson(schemaId: String, json: Option[JsValue])
+  def mockValidateRequestJson(schemaId: String)
                              (response: Boolean): CallHandler3[String, Option[JsValue], ExecutionContext, Future[Boolean]] = {
     (mockSchemaValidation.validateRequestJson(_: String, _: Option[JsValue])(_: ExecutionContext))
       .expects(schemaId, *, *)
