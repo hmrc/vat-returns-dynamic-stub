@@ -16,16 +16,16 @@
 
 package controllers
 
-import mocks.MockDataRepository
+import mocks.{MockDataRepository, MockSchemaValidation}
 import models.DataModel
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.mvc.Http.Status
 import testUtils.TestSupport
 
-class SetupDataControllerSpec extends TestSupport with MockDataRepository {
+class SetupDataControllerSpec extends TestSupport with MockDataRepository with MockSchemaValidation {
 
-  object TestSetupDataController extends SetupDataController(mockDataRepository)
+  object TestSetupDataController extends SetupDataController(mockSchemaValidation, mockDataRepository)
 
   "SetupDataController.addData" when {
 
@@ -81,7 +81,7 @@ class SetupDataControllerSpec extends TestSupport with MockDataRepository {
 
     "return Status OK (200) on successful removal of data from the stub" in {
       lazy val request = FakeRequest()
-      lazy val result = TestSetupDataController.removeData("someUrl")(request)
+      lazy val result = TestSetupDataController.removeDataBySchemaId("schemaId")(request)
 
       mockRemoveById("someUrl")(successWriteResult)
 
@@ -90,7 +90,7 @@ class SetupDataControllerSpec extends TestSupport with MockDataRepository {
 
     "return Status InternalServerError (500) on unsuccessful removal of data from the stub" in {
       lazy val request = FakeRequest()
-      lazy val result = TestSetupDataController.removeData("someUrl")(request)
+      lazy val result = TestSetupDataController.removeDataBySchemaId("schemaId")(request)
 
       mockRemoveById("someUrl")(errorWriteResult)
 
@@ -118,7 +118,5 @@ class SetupDataControllerSpec extends TestSupport with MockDataRepository {
 
       status(result) shouldBe Status.INTERNAL_SERVER_ERROR
     }
-
   }
-
 }

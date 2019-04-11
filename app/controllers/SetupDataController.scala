@@ -51,21 +51,21 @@ class SetupDataController @Inject()(schemaValidation: SchemaValidation,
   }
 
   private def addStubDataToDB(json: DataModel): Future[Result] = {
-    dataRepository.repository.insert(json).map {
+    dataRepository.addEntry(json).map {
       case result if result.ok => Ok(s"The following JSON was added to the stub: \n\n ${Json.toJson(json)}")
       case _ => InternalServerError(s"Failed to add data to Stub.")
     }
   }
 
   val removeDataBySchemaId: String => Action[AnyContent] = schemaId => Action.async { implicit request =>
-    dataRepository.repository.removeBySchemaId(schemaId).map {
+    dataRepository.removeBySchemaId(schemaId).map {
       case result if result.ok => Ok("Success")
       case _ => InternalServerError("Could not delete data by schema id")
     }
   }
 
   val removeAll: Action[AnyContent] = Action.async { implicit request =>
-    dataRepository.repository.removeAll().map {
+    dataRepository.removeAll().map {
       case result if result.ok => Ok("Removed All Stubbed Data")
       case _ => InternalServerError("Unexpected Error Clearing MongoDB.")
     }

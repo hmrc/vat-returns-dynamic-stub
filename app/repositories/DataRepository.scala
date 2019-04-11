@@ -17,7 +17,6 @@
 package repositories
 
 import javax.inject.{Inject, Singleton}
-
 import models.DataModel
 import play.api.libs.json.Json.JsValueWrapper
 import play.modules.reactivemongo.MongoDbConnection
@@ -28,19 +27,19 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class DataRepository @Inject()() extends MongoDbConnection {
 
-  lazy val repository = new StubbedDataRepositoryBase() {
+  private lazy val repository = new DataRepositoryBase()
 
-    override def removeAll()(implicit ec: ExecutionContext): Future[WriteResult] = removeAll(WriteConcern.Acknowledged)
+  def removeAll()(implicit ec: ExecutionContext): Future[WriteResult] = repository.removeAll(WriteConcern.Acknowledged)
 
-    override def removeById(url: String)(implicit ec: ExecutionContext): Future[WriteResult] = remove("_id" -> url)
+  def removeById(url: String)(implicit ec: ExecutionContext): Future[WriteResult] = repository.remove("_id" -> url)
 
-    def removeBySchemaId(schemaId: String)(implicit ec: ExecutionContext): Future[WriteResult] = remove("schemaId" -> schemaId)
+  def removeBySchemaId(schemaId: String)(implicit ec: ExecutionContext): Future[WriteResult] = repository.remove("schemaId" -> schemaId)
 
-    override def addEntry(document: DataModel)(implicit ec: ExecutionContext): Future[WriteResult] = insert(document)
+  def addEntry(document: DataModel)(implicit ec: ExecutionContext): Future[WriteResult] = repository.insert(document)
 
-    override def findById(url: String)(implicit ec: ExecutionContext): Future[DataModel] = find("_id" -> url).map(_.last)
-  }
+  def findById(url: String)(implicit ec: ExecutionContext): Future[DataModel] = repository.find("_id" -> url).map(_.last)
 
-  def apply(): DynamicStubRepository[DataModel, String] = repository
+  def find(query: (String, JsValueWrapper)*)(implicit ec: ExecutionContext): Future[Option[DataModel]] =
+    repository.find(query: _*).map(_.headOption)
 
 }

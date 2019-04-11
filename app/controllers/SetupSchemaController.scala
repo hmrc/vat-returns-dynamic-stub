@@ -22,29 +22,35 @@ import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContent}
 import repositories.SchemaRepository
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
 class SetupSchemaController @Inject()(schemaRepository: SchemaRepository) extends BaseController {
 
   val addSchema: Action[JsValue] = Action.async(parse.json) {
-    implicit request => withJsonBody[SchemaModel](
-      json => {
-        schemaRepository().addEntry(json).map(_.ok match {
-          case true => Ok(s"Successfully added Schema: ${request.body}")
-          case _ => InternalServerError("Could not store data")
-        })
-      }
-    ).recover {
+    implicit request => withJsonBody[SchemaModel] {
+      json =>
+        schemaRepository.addEntry(json) map ( result =>
+          if(result.ok) {
+            Ok(s"Successfully added Schema: ${request.body}")
+          } else {
+            InternalServerError(s"Could not store schema: ${json._id}")
+          }
+        )
+      } recover {
       case _ => BadRequest("Error Parsing Json SchemaModel")
     }
   }
 
   val removeSchema: String => Action[AnyContent] = id => Action.async {
     implicit request =>
-      schemaRepository().removeById(id).map(_.ok match {
-        case true => Ok("Success")
-        case _ => InternalServerError("Could not delete data")
-      })
+      schemaRepository.removeById(id).map ( result =>
+        if (result.ok) {
+          Ok("Success")
+        } else {
+          InternalServerError(s"Could not delete schema: $id")
+        }
+      )
   }
 }

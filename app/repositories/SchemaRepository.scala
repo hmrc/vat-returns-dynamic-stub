@@ -26,20 +26,14 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class SchemaRepository @Inject()() extends MongoDbConnection {
 
-  lazy val repository = new SchemaRepositoryBase() {
+  private lazy val repository = new SchemaRepositoryBase()
 
-    override def findById(schemaId: String)(implicit ec: ExecutionContext): Future[SchemaModel] =
-      find("_id" -> schemaId).map(_.last)
+  def findById(schemaId: String)(implicit ec: ExecutionContext): Future[SchemaModel] = repository.find("_id" -> schemaId).map(_.last)
 
-    override def removeById(schemaId: String)(implicit ec: ExecutionContext): Future[WriteResult] =
-      remove("_id" -> schemaId)
+  def removeById(schemaId: String)(implicit ec: ExecutionContext): Future[WriteResult] = repository.remove("_id" -> schemaId)
 
-    override def removeAll()(implicit ec: ExecutionContext): Future[WriteResult] =
-      removeAll(WriteConcern.Acknowledged)
+  def removeAll()(implicit ec: ExecutionContext): Future[WriteResult] = repository.removeAll(WriteConcern.Acknowledged)
 
-    override def addEntry(document: SchemaModel)(implicit ec: ExecutionContext): Future[WriteResult] =
-      insert(document)
-  }
+  def addEntry(document: SchemaModel)(implicit ec: ExecutionContext): Future[WriteResult] = repository.insert(document)
 
-  def apply(): DynamicStubRepository[SchemaModel, String] = repository
 }

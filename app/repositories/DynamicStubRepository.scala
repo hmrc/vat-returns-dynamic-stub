@@ -22,7 +22,8 @@ import reactivemongo.api.DB
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.bson.BSONObjectID
 import uk.gov.hmrc.mongo.{ReactiveRepository, Repository}
-
+import play.api.libs.json.Writes.StringWrites
+import play.api.libs.json.Reads.StringReads
 import scala.concurrent.{ExecutionContext, Future}
 
 trait DynamicStubRepository[T, O] extends Repository[T, BSONObjectID] {
@@ -34,12 +35,23 @@ trait DynamicStubRepository[T, O] extends Repository[T, BSONObjectID] {
   def removeAll()(implicit ec: ExecutionContext): Future[WriteResult]
 
   def addEntry(t: T)(implicit ec: ExecutionContext): Future[WriteResult]
+
 }
 
-abstract class StubbedDataRepositoryBase(implicit mongo: () => DB, formats: Format[DataModel], manifest: Manifest[DataModel])
-  extends ReactiveRepository[DataModel, BSONObjectID]("data", mongo, formats)
-    with DynamicStubRepository[DataModel, String]
+class DataRepositoryBase(implicit mongo: () => DB, formats: Format[DataModel], manifest: Manifest[DataModel])
+  extends ReactiveRepository[DataModel, String]("data", mongo, formats, Format(StringReads, StringWrites))
 
-abstract class SchemaRepositoryBase(implicit mongo: () => DB, formats: Format[SchemaModel], manifest: Manifest[SchemaModel])
-  extends ReactiveRepository[SchemaModel, BSONObjectID]("schemas", mongo, formats)
-    with DynamicStubRepository[SchemaModel, String]
+class SchemaRepositoryBase(implicit mongo: () => DB, formats: Format[SchemaModel], manifest: Manifest[SchemaModel])
+  extends ReactiveRepository[SchemaModel, String]("schemas", mongo, formats, Format(StringReads, StringWrites))
+
+//abstract class StubbedDataRepositoryBase(implicit mongo: () => DB, formats: Format[DataModel], manifest: Manifest[DataModel])
+//  extends ReactiveRepository[DataModel, BSONObjectID]("data", mongo, formats)
+//    with DynamicStubRepository[DataModel, String] {
+//
+//  def removeBySchemaId(schemaId: String)(implicit ec: ExecutionContext): Future[WriteResult]
+//
+//}
+//
+//abstract class SchemaRepositoryBase(implicit mongo: () => DB, formats: Format[SchemaModel], manifest: Manifest[SchemaModel])
+//  extends ReactiveRepository[SchemaModel, BSONObjectID]("schemas", mongo, formats)
+//    with DynamicStubRepository[SchemaModel, String]
