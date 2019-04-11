@@ -44,14 +44,3 @@ class DataRepositoryBase(implicit mongo: () => DB, formats: Format[DataModel], m
 class SchemaRepositoryBase(implicit mongo: () => DB, formats: Format[SchemaModel], manifest: Manifest[SchemaModel])
   extends ReactiveRepository[SchemaModel, String]("schemas", mongo, formats, Format(StringReads, StringWrites))
 
-//abstract class StubbedDataRepositoryBase(implicit mongo: () => DB, formats: Format[DataModel], manifest: Manifest[DataModel])
-//  extends ReactiveRepository[DataModel, BSONObjectID]("data", mongo, formats)
-//    with DynamicStubRepository[DataModel, String] {
-//
-//  def removeBySchemaId(schemaId: String)(implicit ec: ExecutionContext): Future[WriteResult]
-//
-//}
-//
-//abstract class SchemaRepositoryBase(implicit mongo: () => DB, formats: Format[SchemaModel], manifest: Manifest[SchemaModel])
-//  extends ReactiveRepository[SchemaModel, BSONObjectID]("schemas", mongo, formats)
-//    with DynamicStubRepository[SchemaModel, String]
