@@ -1,3 +1,7 @@
 
-POST    /data       @controllers.SetupDataController.addData
-DELETE  /all-data   @controllers.SetupDataController.removeAll
+POST    /data               @controllers.SetupDataController.addData
+DELETE  /all-data           @controllers.SetupDataController.removeAll
+DELETE  /data/:schemaId     @controllers.SetupDataController.removeDataBySchemaId(schemaId: String)
+
+POST    /schema             @controllers.SetupSchemaController.addSchema
+DELETE  /schema/:schemaId   @controllers.SetupSchemaController.removeSchema(schemaId: String)

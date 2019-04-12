@@ -57,7 +57,8 @@ val compile = Seq(
   "uk.gov.hmrc" %% "bootstrap-play-25" % "4.6.0",
   "uk.gov.hmrc" %% "domain" % "5.3.0",
   "uk.gov.hmrc" %% "play-reactivemongo" % "6.2.0",
-  "org.typelevel" %% "cats" % "0.9.0"
+  "org.typelevel" %% "cats" % "0.9.0",
+  "com.github.fge" % "json-schema-validator" % "2.2.6"
 )
 
 def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
@@ -80,6 +81,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(scalaSettings: _*)
   .settings(publishingSettings: _*)
   .settings(defaultSettings(): _*)
+  .settings(PlayKeys.playDefaultPort := 9159)
   .settings(
     majorVersion := 0,
     scalaVersion := "2.11.11",

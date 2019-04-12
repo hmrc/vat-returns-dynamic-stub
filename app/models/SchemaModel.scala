@@ -18,13 +18,12 @@ package models
 
 import play.api.libs.json.{JsValue, Json, OFormat}
 
-case class DataModel(_id: String,
-                     schemaId: Option[String] = None,
-                     method: String,
-                     status: Int,
-                     response: Option[JsValue])
+case class SchemaModel(_id: String,
+                       url: String,
+                       method: String,
+                       responseSchema: JsValue,
+                       requestSchema: Option[JsValue] = None)
 
-object DataModel {
-  implicit val formats: OFormat[DataModel] = Json.format[DataModel]
+object SchemaModel {
+  implicit val formats: OFormat[SchemaModel] = Json.format[SchemaModel]
 }
-

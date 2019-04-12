@@ -33,28 +33,44 @@ trait MockDataRepository extends TestSupport with MockFactory {
 
   lazy val mockDataRepository: DataRepository = mock[DataRepository]
 
-  def mockAddEntry(document: DataModel)(response: WriteResult): CallHandler2[DataModel, ExecutionContext, Future[WriteResult]] = {
-    (mockDataRepository.insert(_: DataModel)(_: ExecutionContext))
+  def mockAddEntry(document: DataModel)
+                  (response: WriteResult): CallHandler2[DataModel, ExecutionContext, Future[WriteResult]] = {
+    (mockDataRepository.addEntry(_: DataModel)(_: ExecutionContext))
       .expects(document, *)
       .returning(response)
   }
 
-  def mockRemoveById(url: String)(response: WriteResult): CallHandler2[String, ExecutionContext, Future[WriteResult]] = {
+  def mockRemoveById(url: String)
+                    (response: WriteResult): CallHandler2[String, ExecutionContext, Future[WriteResult]] = {
     (mockDataRepository.removeById(_: String)(_: ExecutionContext))
       .expects(url, *)
       .returning(response)
   }
 
-  def mockRemoveAll()(response: WriteResult): CallHandler1[ExecutionContext, Future[WriteResult]] = {
+  def mockRemoveBySchemaId(schemaId: String)
+                          (response: WriteResult): CallHandler2[String, ExecutionContext, Future[WriteResult]] = {
+    (mockDataRepository.removeBySchemaId(_: String)(_: ExecutionContext))
+      .expects(schemaId, *)
+      .returning(response)
+  }
+
+  def mockRemoveAll()
+                   (response: WriteResult): CallHandler1[ExecutionContext, Future[WriteResult]] = {
     (mockDataRepository.removeAll()(_: ExecutionContext))
       .expects(*)
       .returning(response)
   }
 
-  def mockFind(response: List[DataModel]): CallHandler2[(String, JsValueWrapper), ExecutionContext, Future[List[DataModel]]] = {
-    (mockDataRepository.find(_: (String, JsValueWrapper))(_: ExecutionContext))
-      .expects(*,*)
+  def mockFindById(url: String)
+                  (response: DataModel): CallHandler2[String, ExecutionContext, Future[DataModel]] = {
+    (mockDataRepository.findById(_: String)(_: ExecutionContext))
+      .expects(*, *)
       .returning(response)
   }
 
+  def mockFind(response: Option[DataModel]): CallHandler2[(String, JsValueWrapper), ExecutionContext, Future[Option[DataModel]]] = {
+    (mockDataRepository.find(_: (String, JsValueWrapper))(_: ExecutionContext))
+      .expects(*, *)
+      .returning(response)
+  }
 }
