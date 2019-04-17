@@ -101,10 +101,45 @@ class SetupSchemaControllerSpec extends TestSupport with MockSchemaRepository {
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
 
-        s"return the correct body" in {
+        "return the correct body" in {
           await(bodyOf(result)) shouldBe "Could not delete schema: someId"
         }
       }
+    }
+
+    "calling .removeAllSchemas" when {
+
+      "the schemas are removed successfully" should {
+
+        lazy val request = FakeRequest()
+        lazy val result = TestSetupSchemaController.removeAllSchemas(request)
+
+        "return 200" in {
+          setupMockRemoveAllSchemas()(successWriteResult)
+          status(result) shouldBe Status.OK
+        }
+
+        s"return the correct body" in {
+          await(bodyOf(result)) shouldBe "Removed All Schemas"
+        }
+      }
+
+      "the schemas are not successfully removed" should {
+
+
+        lazy val request = FakeRequest()
+        lazy val result = TestSetupSchemaController.removeAllSchemas(request)
+
+        "return 500" in {
+          setupMockRemoveAllSchemas()(errorWriteResult)
+          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+        }
+
+        "return the correct body" in {
+          await(bodyOf(result)) shouldBe "Unable to remove schemas"
+        }
+      }
+
     }
   }
 }
