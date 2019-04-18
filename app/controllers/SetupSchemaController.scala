@@ -17,6 +17,7 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
+
 import models.SchemaModel
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContent}
@@ -52,5 +53,13 @@ class SetupSchemaController @Inject()(schemaRepository: SchemaRepository) extend
           InternalServerError(s"Could not delete schema: $id")
         }
       )
+  }
+
+  val removeAllSchemas: Action[AnyContent] = Action.async {
+    implicit request =>
+      schemaRepository.removeAll().map(_.ok match {
+        case true => Ok("Removed All Schemas")
+        case _ => InternalServerError("Unable to remove schemas")
+      })
   }
 }
