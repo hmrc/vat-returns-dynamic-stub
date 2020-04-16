@@ -19,17 +19,18 @@ package controllers
 import javax.inject.Inject
 import models.HttpMethod._
 import models.{DataModel, ErrorResponse}
-import play.api.libs.json.{JsObject, JsValue, Json}
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.libs.json.{JsObject, Json}
+import play.api.mvc.{Action, AnyContent, ControllerComponents, Result}
 import repositories.DataRepository
-import uk.gov.hmrc.play.bootstrap.controller.BaseController
+import uk.gov.hmrc.play.bootstrap.controller.BackendController
 import utils.SchemaValidation
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class RequestHandlerController @Inject()(dataRepository: DataRepository,
-                                         schemaValidation: SchemaValidation) extends BaseController {
+                                         schemaValidation: SchemaValidation,
+                                         cc: ControllerComponents) extends BackendController(cc) {
 
   def getRequestHandler(url: String): Action[AnyContent] = Action.async { implicit request =>
 

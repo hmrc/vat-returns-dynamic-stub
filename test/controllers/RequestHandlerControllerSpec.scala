@@ -19,17 +19,14 @@ package controllers
 import mocks.{MockDataRepository, MockSchemaValidation}
 import models.DataModel
 import play.api.test.Helpers.call
-import play.api.libs.json.{JsObject, Json}
-import play.api.mvc.{AnyContent, Request, Result}
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.mvc.Http.Status
 import testUtils.TestSupport
 
-import scala.concurrent.Future
-
 class RequestHandlerControllerSpec extends TestSupport with MockDataRepository with MockSchemaValidation {
 
-  object TestRequestHandlerController extends RequestHandlerController(mockDataRepository, mockSchemaValidation)
+  object TestRequestHandlerController extends RequestHandlerController(mockDataRepository, mockSchemaValidation, cc)
 
   lazy val successModel = DataModel(
     _id = "test",

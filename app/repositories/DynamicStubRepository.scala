@@ -21,12 +21,12 @@ import play.api.libs.json.Format
 import reactivemongo.api.DB
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.bson.BSONObjectID
-import uk.gov.hmrc.mongo.{ReactiveRepository, Repository}
+import uk.gov.hmrc.mongo.ReactiveRepository
 import play.api.libs.json.Writes.StringWrites
 import play.api.libs.json.Reads.StringReads
 import scala.concurrent.{ExecutionContext, Future}
 
-trait DynamicStubRepository[T, O] extends Repository[T, BSONObjectID] {
+trait DynamicStubRepository[T, O] extends ReactiveRepository[T, BSONObjectID] {
 
   def findById(o: O)(implicit ec: ExecutionContext): Future[T]
 
@@ -38,9 +38,9 @@ trait DynamicStubRepository[T, O] extends Repository[T, BSONObjectID] {
 
 }
 
-class DataRepositoryBase(implicit mongo: () => DB, formats: Format[DataModel], manifest: Manifest[DataModel])
+class DataRepositoryBase(implicit mongo: () => DB, formats: Format[DataModel])
   extends ReactiveRepository[DataModel, String]("data", mongo, formats, Format(StringReads, StringWrites))
 
-class SchemaRepositoryBase(implicit mongo: () => DB, formats: Format[SchemaModel], manifest: Manifest[SchemaModel])
+class SchemaRepositoryBase(implicit mongo: () => DB, formats: Format[SchemaModel])
   extends ReactiveRepository[SchemaModel, String]("schemas", mongo, formats, Format(StringReads, StringWrites))
 

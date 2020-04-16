@@ -1,8 +1,8 @@
 
-POST    /data               @controllers.SetupDataController.addData
-DELETE  /all-data           @controllers.SetupDataController.removeAll
-DELETE  /data/:schemaId     @controllers.SetupDataController.removeDataBySchemaId(schemaId: String)
+POST    /data               controllers.SetupDataController.addData
+DELETE  /all-data           controllers.SetupDataController.removeAll
+DELETE  /data/:schemaId     controllers.SetupDataController.removeDataBySchemaId(schemaId: String)
 
-POST    /schema             @controllers.SetupSchemaController.addSchema
-DELETE  /all-schemas        @controllers.SetupSchemaController.removeAllSchemas
-DELETE  /schema/:schemaId   @controllers.SetupSchemaController.removeSchema(schemaId: String)
+POST    /schema             controllers.SetupSchemaController.addSchema
+DELETE  /all-schemas        controllers.SetupSchemaController.removeAllSchemas
+DELETE  /schema/:schemaId   controllers.SetupSchemaController.removeSchema(schemaId: String)

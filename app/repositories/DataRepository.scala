@@ -19,13 +19,18 @@ package repositories
 import javax.inject.{Inject, Singleton}
 import models.DataModel
 import play.api.libs.json.Json.JsValueWrapper
-import play.modules.reactivemongo.MongoDbConnection
+import play.modules.reactivemongo.ReactiveMongoComponent
+import reactivemongo.api.DefaultDB
 import reactivemongo.api.commands._
+import uk.gov.hmrc.mongo.MongoConnector
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class DataRepository @Inject()() extends MongoDbConnection {
+class DataRepository @Inject()(reactiveMongoComponent: ReactiveMongoComponent) {
+
+  lazy val mongoConnector: MongoConnector = reactiveMongoComponent.mongoConnector
+  implicit lazy val db: () => DefaultDB = mongoConnector.db
 
   private lazy val repository = new DataRepositoryBase()
 
