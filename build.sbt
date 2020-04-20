@@ -54,9 +54,9 @@ lazy val coverageSettings: Seq[Setting[_]] = {
 
 val compile = Seq(
   ws,
-  "uk.gov.hmrc" %% "bootstrap-play-26" % "1.3.0",
+  "uk.gov.hmrc" %% "bootstrap-play-26" % "1.7.0",
   "uk.gov.hmrc" %% "domain" % "5.6.0-play-26",
-  "uk.gov.hmrc" %% "simple-reactivemongo" % "7.22.0-play-26",
+  "uk.gov.hmrc" %% "simple-reactivemongo" % "7.26.0-play-26",
   "org.typelevel" %% "cats" % "0.9.0",
   "com.github.fge" % "json-schema-validator" % "2.2.6"
 )

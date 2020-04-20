@@ -21,6 +21,7 @@ import models.SchemaModel
 import play.modules.reactivemongo.ReactiveMongoComponent
 import reactivemongo.api.DefaultDB
 import reactivemongo.api.commands._
+import reactivemongo.api.WriteConcern
 import uk.gov.hmrc.mongo.MongoConnector
 
 import scala.concurrent.{ExecutionContext, Future}
