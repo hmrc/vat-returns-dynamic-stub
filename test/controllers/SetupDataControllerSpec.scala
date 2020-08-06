@@ -95,28 +95,11 @@ class SetupDataControllerSpec extends TestSupport with MockDataRepository with M
             status = Status.OK
           )
 
-          "adding data to DB is successful" should {
+          lazy val request = FakeRequest().withBody(Json.toJson(model)).withHeaders(("Content-Type", "application/json"))
+          lazy val result = TestSetupDataController.addData(request)
 
-            lazy val request = FakeRequest().withBody(Json.toJson(model)).withHeaders(("Content-Type", "application/json"))
-            lazy val result = TestSetupDataController.addData(request)
-
-            "return 200" in {
-              mockAddEntry(model)(successWriteResult)
-
-              status(result) shouldBe Status.OK
-            }
-          }
-
-          "adding data to DB is unsuccessful" should {
-
-            lazy val request = FakeRequest().withBody(Json.toJson(model)).withHeaders(("Content-Type", "application/json"))
-            lazy val result = TestSetupDataController.addData(request)
-
-            "return 500" in {
-              mockAddEntry(model)(errorWriteResult)
-
-              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-            }
+          "return a not found" in {
+            status(result) shouldBe Status.NOT_FOUND
           }
         }
       }

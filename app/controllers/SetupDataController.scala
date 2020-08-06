@@ -42,7 +42,7 @@ class SetupDataController @Inject()(schemaValidation: SchemaValidation,
                 case true => addStubDataToDB(json)
                 case false => Future.successful(BadRequest(s"Stub data response did not validate against schema: $schemaId. Stub data: ${json.response}"))
               }
-            case None => addStubDataToDB(json)
+            case None => Future.successful(NotFound("Stub data contained no schema id."))
           }
         case x => Future.successful(MethodNotAllowed(s"The method: $x is currently unsupported"))
       }
