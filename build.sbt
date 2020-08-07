@@ -71,7 +71,8 @@ def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
 )
 
 def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] = tests map {
-  test => Group(test.name, Seq(test), SubProcess(ForkOptions(runJVMOptions = Seq("-Dtest.name=" + test.name))))
+  test => Group(test.name, Seq(test), SubProcess(
+    ForkOptions(runJVMOptions = Seq("-Dtest.name=" + test.name))))
 }
 
 lazy val microservice = Project(appName, file("."))
@@ -84,7 +85,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(PlayKeys.playDefaultPort := 9159)
   .settings(
     majorVersion := 0,
-    scalaVersion := "2.11.11",
+    scalaVersion := "2.12.11",
     libraryDependencies ++= appDependencies,
     retrieveManaged := true,
     evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false)
