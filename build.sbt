@@ -54,7 +54,7 @@ lazy val coverageSettings: Seq[Setting[_]] = {
 
 val compile = Seq(
   ws,
-  "uk.gov.hmrc" %% "bootstrap-play-26" % "1.7.0",
+  "uk.gov.hmrc" %% "bootstrap-backend-play-26" % "2.24.0",
   "uk.gov.hmrc" %% "domain" % "5.6.0-play-26",
   "uk.gov.hmrc" %% "simple-reactivemongo" % "7.26.0-play-26",
   "org.typelevel" %% "cats" % "0.9.0",
@@ -72,7 +72,7 @@ def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
 
 def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] = tests map {
   test => Group(test.name, Seq(test), SubProcess(
-    ForkOptions(runJVMOptions = Seq("-Dtest.name=" + test.name))))
+    ForkOptions().withRunJVMOptions(Vector("-Dtest.name=" + test.name))))
 }
 
 lazy val microservice = Project(appName, file("."))
