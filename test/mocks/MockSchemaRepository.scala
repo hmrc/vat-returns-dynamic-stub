@@ -49,4 +49,10 @@ trait MockSchemaRepository extends TestSupport with MockFactory {
       .expects(*)
       .returning(response)
   }
+
+  def setUpMockFindById(id: String)(response: SchemaModel): CallHandler2[String, ExecutionContext, Future[SchemaModel]] = {
+    (mockSchemaRepository.findById(_: String)(_: ExecutionContext))
+      .expects(id, *)
+      .returning(response)
+  }
 }

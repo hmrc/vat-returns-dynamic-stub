@@ -43,7 +43,12 @@ lazy val coverageSettings: Seq[Setting[_]] = {
     "config.*",
     "testOnlyDoNotUseInAppConf.*",
     "partials.*",
-    ".*SchemaValidation*.*")
+    ".*SchemaValidation*.*",
+    "com.kenshoo.play.metrics.*",
+    "controllers..*Reverse.*",
+    ".*stub*",
+    ".*setup*",
+    ".*models*")
 
   Seq(
     ScoverageKeys.coverageExcludedPackages := excludedPackages.mkString(";"),

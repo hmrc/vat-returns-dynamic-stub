@@ -19,40 +19,12 @@ package utils
 import com.github.fge.jsonschema.main.JsonSchema
 import mocks.MockSchemaRepository
 import models.SchemaModel
-import org.mockito.ArgumentMatchers
-import org.mockito.Mockito._
-import org.mockito.stubbing.OngoingStubbing
 import play.api.libs.json.Json
-import repositories.{DynamicStubRepository, SchemaRepository}
 import testUtils.TestSupport
-
-import scala.concurrent.Future
 
 class SchemaValidationSpec2 extends TestSupport with MockSchemaRepository {
 
-//  def setupMocks(schemaModel: SchemaModel): SchemaValidation = {
-////    val mockCollection = app.injector.instanceOf[DynamicStubRepository[SchemaModel, String]]
-//    val mockConnection = mock[SchemaRepository]
-//
-//    when(mockConnection.findById("testSchema")).thenReturn(schemaModel)
-//
-////    when(mockCollection.findById(ArgumentMatchers.eq(schemaModel._id))(ArgumentMatchers.any()))
-////      .thenReturn(Future.successful(schemaModel))
-////
-////    setupMockAddSchema(schemaModel)(successWriteResult)
-//
-//    new SchemaValidation(mockConnection)
-//  }
-
-  def setup(schemaModel: SchemaModel): SchemaValidation = {
-    val mockConnection = mockSchemaRepository
-    //when(mockSchemaRepository.findById("testSchema")).thenReturn(Future(schemaModel))
-    when(mockSchemaRepository.findById(ArgumentMatchers.any())(ArgumentMatchers.any()))
-      .thenReturn(Future.successful(schemaModel))
-    new SchemaValidation(mockSchemaRepository)
-  }
-
-
+  object TestSchemaValidation extends SchemaValidation(mockSchemaRepository)
 
   val schema = Json.parse("""{
                             	"title": "Person",
@@ -72,11 +44,10 @@ class SchemaValidationSpec2 extends TestSupport with MockSchemaRepository {
 
     "with a matching schema in mongo" should {
       val schemaModel = SchemaModel("testSchema","/test","GET", responseSchema = schema)
-      lazy val validation = setup(schemaModel)
-//        lazy val validation = setupMocks(SchemaModel("testSchema","/test","GET", responseSchema = schema))
+      lazy val result = TestSchemaValidation.loadResponseSchema("testSchema")
 
       "return a json schema" in {
-        lazy val result = validation.loadResponseSchema("testSchema")
+        setUpMockFindById("testSchema")(schemaModel)
         await(result).isInstanceOf[JsonSchema]
       }
     }
@@ -84,13 +55,42 @@ class SchemaValidationSpec2 extends TestSupport with MockSchemaRepository {
 //    "without a matching schema in mongo" should {
 //
 //      "throw an exception" in {
-//        val validation = setupFutureFailedMocks(SchemaModel("testSchema","/test","GET", responseSchema = schema))
+////        val validation = setupFutureFailedMocks(SchemaModel("testSchema","/test","GET", responseSchema = schema))
 //
 //        val ex = intercept[RuntimeException] {
-//          await(validation.loadResponseSchema("testSchema"))
+//          await(TestSchemaValidation.loadResponseSchema("testSchema"))
 //        }
 //        ex.getMessage shouldEqual "Schema could not be retrieved/found in MongoDB"
 //      }
 //    }
+  }
+
+  "Calling .validateResponseJson" should {
+
+    "with a valid json body" should {
+
+      "return true" in {
+        val schemaModel = SchemaModel("testSchema","/test","GET", responseSchema = schema)
+
+        setUpMockFindById("testSchema")(schemaModel)
+        val json = Json.parse("""{ "firstName" : "Bob", "lastName" : "Bobson" }""")
+        val result = TestSchemaValidation.validateResponseJson("testSchema", Some(json))
+
+
+        await(result) shouldEqual true
+      }
+    }
+
+    "with an invalid json body" should {
+      "return false" in {
+        val schemaModel = SchemaModel("testSchema","/test","GET", responseSchema = schema)
+
+        setUpMockFindById("testSchema")(schemaModel)
+        val json = Json.parse("""{ "firstName" : "Bob" }""")
+
+        lazy val result = TestSchemaValidation.validateResponseJson("testSchema", Some(json))
+        await(result) shouldEqual false
+      }
+    }
   }
 }
