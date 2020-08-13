@@ -16,7 +16,7 @@
 
 package testUtils
 
-import org.scalatestplus.play.guice.GuiceOneServerPerSuite
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.mvc.{AnyContentAsEmpty, ControllerComponents}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.stubControllerComponents
@@ -25,7 +25,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 
 import scala.concurrent.ExecutionContext
 
-trait TestSupport extends UnitSpec with GuiceOneServerPerSuite with MaterializerSupport {
+trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with MaterializerSupport {
 
   implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
 

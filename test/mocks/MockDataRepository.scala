@@ -20,7 +20,7 @@ import models.DataModel
 import org.scalamock.handlers.{CallHandler1, CallHandler2}
 import org.scalamock.scalatest.MockFactory
 import play.api.libs.json.Json.JsValueWrapper
-import reactivemongo.api.commands.{DefaultWriteResult, WriteError, WriteResult}
+import reactivemongo.api.commands.{UpdateWriteResult, WriteError, WriteResult}
 import repositories.DataRepository
 import testUtils.TestSupport
 
@@ -28,8 +28,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait MockDataRepository extends TestSupport with MockFactory {
 
-  val successWriteResult = DefaultWriteResult(ok = true, n = 1, writeErrors = Seq(), None, None, None)
-  val errorWriteResult = DefaultWriteResult(ok = false, n = 1, writeErrors = Seq(WriteError(1,1,"Error")), None, None, None)
+  val successWriteResult = UpdateWriteResult(ok = true, n = 1, 1, Seq(), writeErrors = Seq(), None, None, None)
+  val errorWriteResult = UpdateWriteResult(ok = false, n = 1, 0, Seq(), writeErrors = Seq(WriteError(1,1,"Error")), None, None, None)
 
   lazy val mockDataRepository: DataRepository = mock[DataRepository]
 
