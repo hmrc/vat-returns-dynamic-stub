@@ -62,7 +62,7 @@ val compile = Seq(
   ws,
   "uk.gov.hmrc" %% "bootstrap-backend-play-26" % "2.24.0",
   "uk.gov.hmrc" %% "domain" % "5.6.0-play-26",
-  "uk.gov.hmrc" %% "simple-reactivemongo" % "7.26.0-play-26",
+  "uk.gov.hmrc" %% "simple-reactivemongo" % "7.30.0-play-26",
   "org.typelevel" %% "cats" % "0.9.0",
   "com.github.fge" % "json-schema-validator" % "2.2.6"
 )

@@ -51,18 +51,6 @@ class SchemaValidationSpec2 extends TestSupport with MockSchemaRepository {
         await(result).isInstanceOf[JsonSchema]
       }
     }
-
-//    "without a matching schema in mongo" should {
-//
-//      "throw an exception" in {
-////        val validation = setupFutureFailedMocks(SchemaModel("testSchema","/test","GET", responseSchema = schema))
-//
-//        val ex = intercept[RuntimeException] {
-//          await(TestSchemaValidation.loadResponseSchema("testSchema"))
-//        }
-//        ex.getMessage shouldEqual "Schema could not be retrieved/found in MongoDB"
-//      }
-//    }
   }
 
   "Calling .validateResponseJson" should {
