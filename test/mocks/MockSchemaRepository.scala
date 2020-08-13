@@ -19,7 +19,7 @@ package mocks
 import models.SchemaModel
 import org.scalamock.handlers.{CallHandler1, CallHandler2}
 import org.scalamock.scalatest.MockFactory
-import reactivemongo.api.commands.{DefaultWriteResult, WriteError, WriteResult}
+import reactivemongo.api.commands.{UpdateWriteResult, WriteError, WriteResult}
 import repositories.SchemaRepository
 import testUtils.TestSupport
 
@@ -27,8 +27,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait MockSchemaRepository extends TestSupport with MockFactory {
 
-  val successWriteResult = DefaultWriteResult(ok = true, n = 1, writeErrors = Seq(), None, None, None)
-  val errorWriteResult = DefaultWriteResult(ok = false, n = 1, writeErrors = Seq(WriteError(1,1,"Error")), None, None, None)
+  val successWriteResult = UpdateWriteResult(ok = true, n = 1, 1, Seq(), Seq(), None, None, None)
+  val errorWriteResult = UpdateWriteResult(ok = false, n = 1, 0, Seq(), writeErrors = Seq(WriteError(1,1,"Error")), None, None, None)
 
   lazy val mockSchemaRepository: SchemaRepository = mock[SchemaRepository]
 
@@ -47,6 +47,12 @@ trait MockSchemaRepository extends TestSupport with MockFactory {
   def setupMockRemoveAllSchemas()(response: WriteResult): CallHandler1[ExecutionContext, Future[WriteResult]] = {
     (mockSchemaRepository.removeAll()(_: ExecutionContext))
       .expects(*)
+      .returning(response)
+  }
+
+  def setUpMockFindById(id: String)(response: SchemaModel): CallHandler2[String, ExecutionContext, Future[SchemaModel]] = {
+    (mockSchemaRepository.findById(_: String)(_: ExecutionContext))
+      .expects(id, *)
       .returning(response)
   }
 }

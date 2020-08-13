@@ -22,7 +22,7 @@ import models.HttpMethod._
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents, Result}
 import repositories.DataRepository
-import uk.gov.hmrc.play.bootstrap.controller.BackendController
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import utils.SchemaValidation
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -58,14 +58,14 @@ class SetupDataController @Inject()(schemaValidation: SchemaValidation,
     }
   }
 
-  val removeDataBySchemaId: String => Action[AnyContent] = schemaId => Action.async { implicit request =>
+  val removeDataBySchemaId: String => Action[AnyContent] = schemaId => Action.async {
     dataRepository.removeBySchemaId(schemaId).map {
       case result if result.ok => Ok("Success")
       case _ => InternalServerError("Could not delete data by schema id")
     }
   }
 
-  val removeAll: Action[AnyContent] = Action.async { implicit request =>
+  val removeAll: Action[AnyContent] = Action.async {
     dataRepository.removeAll().map {
       case result if result.ok => Ok("Removed All Stubbed Data")
       case _ => InternalServerError("Unexpected Error Clearing MongoDB.")

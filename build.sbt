@@ -42,7 +42,13 @@ lazy val coverageSettings: Seq[Setting[_]] = {
     "prod.*",
     "config.*",
     "testOnlyDoNotUseInAppConf.*",
-    "partials.*")
+    "partials.*",
+    ".*SchemaValidation*.*",
+    "com.kenshoo.play.metrics.*",
+    "controllers..*Reverse.*",
+    ".*stub*",
+    ".*setup*",
+    ".*models*")
 
   Seq(
     ScoverageKeys.coverageExcludedPackages := excludedPackages.mkString(";"),
@@ -54,9 +60,9 @@ lazy val coverageSettings: Seq[Setting[_]] = {
 
 val compile = Seq(
   ws,
-  "uk.gov.hmrc" %% "bootstrap-play-26" % "1.7.0",
+  "uk.gov.hmrc" %% "bootstrap-backend-play-26" % "2.24.0",
   "uk.gov.hmrc" %% "domain" % "5.6.0-play-26",
-  "uk.gov.hmrc" %% "simple-reactivemongo" % "7.26.0-play-26",
+  "uk.gov.hmrc" %% "simple-reactivemongo" % "7.30.0-play-26",
   "org.typelevel" %% "cats" % "0.9.0",
   "com.github.fge" % "json-schema-validator" % "2.2.6"
 )
@@ -67,11 +73,13 @@ def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
   "org.pegdown" % "pegdown" % "1.6.0" % scope,
   "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % scope,
   "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
-  "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0" % scope
+  "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0" % scope,
+  "org.mockito" % "mockito-core" % "2.24.5" % scope
 )
 
 def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] = tests map {
-  test => Group(test.name, Seq(test), SubProcess(ForkOptions(runJVMOptions = Seq("-Dtest.name=" + test.name))))
+  test => Group(test.name, Seq(test), SubProcess(
+    ForkOptions().withRunJVMOptions(Vector("-Dtest.name=" + test.name))))
 }
 
 lazy val microservice = Project(appName, file("."))
@@ -84,7 +92,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(PlayKeys.playDefaultPort := 9159)
   .settings(
     majorVersion := 0,
-    scalaVersion := "2.11.11",
+    scalaVersion := "2.12.11",
     libraryDependencies ++= appDependencies,
     retrieveManaged := true,
     evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false)
