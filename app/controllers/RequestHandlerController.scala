@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package controllers
 import javax.inject.Inject
 import models.HttpMethod._
 import models.{DataModel, ErrorResponse}
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents, Result}
 import repositories.DataRepository
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
@@ -32,29 +32,17 @@ class RequestHandlerController @Inject()(dataRepository: DataRepository,
                                          schemaValidation: SchemaValidation,
                                          cc: ControllerComponents) extends BackendController(cc) {
 
+  val errorResponseBody: JsValue = Json.obj(
+    "code" -> "NOT_FOUND",
+    "reason" -> "The remote endpoint has indicated that no associated data found."
+  )
+
   def getRequestHandler(url: String): Action[AnyContent] = Action.async { implicit request =>
 
-    val dataNotUsingQueryStringParameters =
-      dataRepository.find("_id" -> s"""${request.uri.takeWhile(_ != '?')}""", "method" -> GET)
-    val dataUsingQueryStringParameters =
-      dataRepository.find("_id" -> request.uri, "method" -> GET)
-
-    def getResult(data: Option[DataModel]): Result = data match {
+    dataRepository.find("_id" -> request.uri, "method" -> GET) map {
       case Some(result) if result.response.nonEmpty => Status(result.status)(result.response.get)
       case Some(result) => Status(result.status)
-      case _ => NotFound(
-        Json.toJson(ErrorResponse(
-          NOT_FOUND.toString,
-          s"Could not find endpoint in Dynamic Stub matching the URI: ${request.uri}"
-        ))
-      )
-    }
-
-    for {
-      dataBasedOnUrlPath <- dataNotUsingQueryStringParameters
-      dataBasedOnCompleteUri <- dataUsingQueryStringParameters
-    } yield {
-      if (dataBasedOnCompleteUri.nonEmpty) getResult(dataBasedOnCompleteUri) else getResult(dataBasedOnUrlPath)
+      case _ => NotFound(errorResponseBody)
     }
   }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,37 +32,50 @@ class RequestHandlerControllerSpec extends TestSupport with MockDataRepository w
     _id = "test",
     method = "GET",
     status = Status.OK,
-    response = None
-  )
-
-  lazy val successWithBodyModel = DataModel(
-    _id = "test",
-    method = "GET",
-    status = Status.OK,
     response = Some(Json.parse("""{"something" : "hello"}"""))
   )
 
-  "The getRequestHandler method" should {
+  "The getRequestHandler method" when {
 
-    "return the status code specified in the model" in {
-      lazy val result = TestRequestHandlerController.getRequestHandler("/test")(FakeRequest())
+    "the record is found in the database" should {
 
-      mockFind(Some(successModel)).twice()
-      status(result) shouldBe Status.OK
+      lazy val result = {
+        mockFind(Some(successModel))
+        TestRequestHandlerController.getRequestHandler("/test")(FakeRequest())
+      }
+
+      "return the status code specified in the model" in {
+        status(result) shouldBe Status.OK
+      }
+
+      "return the body specified in the model" in {
+        await(bodyOf(result)) shouldBe s"${successModel.response.get}"
+      }
     }
 
-    "return the status and body" in {
-      lazy val result = TestRequestHandlerController.getRequestHandler("/test")(FakeRequest())
+    "the record cannot be found in the database" should {
 
-      mockFind(Some(successWithBodyModel)).twice()
-      status(result) shouldBe Status.OK
-      await(bodyOf(result)) shouldBe s"${successWithBodyModel.response.get}"
+      lazy val result = {
+        mockFind(None)
+        TestRequestHandlerController.getRequestHandler("/test")(FakeRequest())
+      }
+
+      "return a 404 status" in {
+        status(result) shouldBe Status.NOT_FOUND
+      }
+
+      "return the expected body when the endpoint cannot be found" in {
+        await(bodyOf(result)) shouldBe s"${TestRequestHandlerController.errorResponseBody}"
+      }
+
     }
+
+
 
     "return a 404 status when the endpoint cannot be found" in {
       lazy val result = TestRequestHandlerController.getRequestHandler("/test")(FakeRequest())
 
-      mockFind(None).twice()
+      mockFind(None)
       status(result) shouldBe Status.NOT_FOUND
     }
   }
