@@ -18,9 +18,9 @@ package controllers
 
 import javax.inject.Inject
 import models.HttpMethod._
-import models.{DataModel, ErrorResponse}
+import models.ErrorResponse
 import play.api.libs.json.{JsObject, JsValue, Json}
-import play.api.mvc.{Action, AnyContent, ControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import repositories.DataRepository
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import utils.SchemaValidation
