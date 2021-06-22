@@ -17,10 +17,8 @@
 import play.core.PlayVersion
 import sbt.Tests.{Group, SubProcess}
 import uk.gov.hmrc.DefaultBuildSettings._
-import uk.gov.hmrc.{SbtArtifactory, SbtAutoBuildPlugin}
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
-import uk.gov.hmrc.versioning.SbtGitVersioning
 
 val appName: String = "vat-returns-dynamic-stub"
 
@@ -60,9 +58,9 @@ lazy val coverageSettings: Seq[Setting[_]] = {
 
 val compile = Seq(
   ws,
-  "uk.gov.hmrc" %% "bootstrap-backend-play-26" % "2.24.0",
-  "uk.gov.hmrc" %% "domain" % "5.6.0-play-26",
-  "uk.gov.hmrc" %% "simple-reactivemongo" % "7.30.0-play-26",
+  "uk.gov.hmrc" %% "bootstrap-backend-play-26" % "5.4.0",
+  "uk.gov.hmrc" %% "domain" % "5.11.0-play-26",
+  "uk.gov.hmrc" %% "simple-reactivemongo" % "8.0.0-play-26",
   "org.typelevel" %% "cats" % "0.9.0",
   "com.github.fge" % "json-schema-validator" % "2.2.6"
 )
@@ -83,7 +81,7 @@ def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] = tests map {
 }
 
 lazy val microservice = Project(appName, file("."))
-  .enablePlugins(Seq(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin,  SbtArtifactory) ++ plugins: _*)
+  .enablePlugins(Seq(play.sbt.PlayScala, SbtDistributablesPlugin) ++ plugins: _*)
   .settings(coverageSettings: _*)
   .settings(playSettings: _*)
   .settings(scalaSettings: _*)
@@ -92,7 +90,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(PlayKeys.playDefaultPort := 9159)
   .settings(
     majorVersion := 0,
-    scalaVersion := "2.12.11",
+    scalaVersion := "2.12.12",
     libraryDependencies ++= appDependencies,
     retrieveManaged := true,
     evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false)
@@ -104,8 +102,5 @@ lazy val microservice = Project(appName, file("."))
     unmanagedSourceDirectories in IntegrationTest := (baseDirectory in IntegrationTest) (base => Seq(base / "it")).value,
     addTestReportOption(IntegrationTest, "int-test-reports"),
     testGrouping in IntegrationTest := oneForkedJvmPerTest((definedTests in IntegrationTest).value),
-    parallelExecution in IntegrationTest := false)
-  .settings(resolvers ++= Seq(
-    Resolver.bintrayRepo("hmrc", "releases"),
-    Resolver.jcenterRepo
-  ))
+    parallelExecution in IntegrationTest := false
+  )
